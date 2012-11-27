@@ -44,8 +44,7 @@ app.get('/invitation/weiboId/:weiboId/page/:page', function(req, res){
 		},
 		function generateResponse(err, items){
 			res.send(items);
-		}
-	);
+		});
 }); 
 
 // app.post('/invitation/:id/reply', function(req, res){ 
@@ -69,16 +68,16 @@ app.post('/invitation/:id/reply', function(req, res){
 			db.collection('invitation', this); 
 		},
 		function updateData(err,collection){
-			collection.update({'_id':new BSON.ObjectID(req.params.id)},{$push:{replyList:req.body}}, {safe:true}, this);
+			collection.findAndModify({'_id':new BSON.ObjectID(req.params.id)},[],
+				{$push:{replyList:req.body}}, {safe:true,new:true}, this);
 		},
-		function generateResponse(err, items){
+		function generateResponse(err, item){
 			if(err){
 				res.send(500);
 			}else{
-				res.send(200);
+				res.send(item);
 			}
-		}
-	);	
+		});	
 }); 
 
 
@@ -94,10 +93,9 @@ app.post('/invitation', function(req, res){
 			if(err){
 				res.send(500);
 			}else{
-				res.send(200);
+				res.send(result[0]);
 			}
-		}
-	);	
+		});	
 }); 
 
 
