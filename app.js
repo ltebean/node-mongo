@@ -5,6 +5,15 @@ var Step = require('step');
 var app=express();
 app.configure(function () {
 	app.use(express.bodyParser());
+	app.use(function errorHandler(err, req, res, next) {
+		console.error(err.stack);
+		if (req.xhr) {
+			res.send(500, { error: 'Something blew up!' });
+		} else {
+			res.status(500);
+			res.render('error', { error: err });
+		}
+	});
 });
 
 var mongo = require('mongodb');
@@ -25,63 +34,7 @@ db.open(function(err, db) {
 });
 
 
-// app.get('/invitation/weiboId/:weiboId/page/:page', function(req, res){ 
-// 	console.log(req.query.weiboId);
-// 	db.collection('invitation', function(err, collection) {
-// 		collection.find({'inviter.user.weiboId':req.params.weiboId}).skip(req.params.page*5).limit(5).toArray(function(err, items) {
-// 			res.send(items);
-// 		});
-// 	});
-// }); 
-
-app.get('/invitation/weiboId/:weiboId/page/:page', function(req, res){ 
-	Step(
-		function getCollection(){
-			db.collection('invitation', this); 
-		},
-		function findResult(err,collection){
-			collection.find({'inviter.user.weiboId':req.params.weiboId}).skip(req.params.page*3).limit(3).toArray(this);
-		},
-		function generateResponse(err, items){
-			res.send(items);
-		});
-}); 
-
-// app.post('/invitation/:id/reply', function(req, res){ 
-// 	console.log(req.params.id);
-// 	console.log(req.body);
-// 	db.collection('invitation', function(err, collection) {
-// 		collection.update({'_id':new BSON.ObjectID(req.params.id)},{$push:{replyList:req.body}}, {safe:true}, function(err, result) {
-// 			if(err){
-// 				res.send(500);
-// 			}else{
-// 				res.send(200);
-// 			}
-
-// 		});
-// 	});
-// }); 
-
-app.post('/invitation/:id/reply', function(req, res){ 
-	Step(
-		function getCollection(){
-			db.collection('invitation', this); 
-		},
-		function updateData(err,collection){
-			collection.findAndModify({'_id':new BSON.ObjectID(req.params.id)},[],
-				{$push:{replyList:req.body}}, {safe:true,new:true}, this);
-		},
-		function generateResponse(err, item){
-			if(err){
-				res.send(500);
-			}else{
-				res.send(item);
-			}
-		});	
-}); 
-
-
-app.post('/invitation', function(req, res){ 
+app.post('/resource/invitation', function(req, res){ 
 	Step(
 		function getCollection(){
 			db.collection('invitation', this); 
@@ -90,13 +43,93 @@ app.post('/invitation', function(req, res){
 			collection.insert(req.body, {safe:true}, this)
 		},
 		function generateResponse(err, result){
-			if(err){
-				res.send(500);
-			}else{
-				res.send(result[0]);
-			}
+			res.send(result[0]);		
 		});	
 }); 
+
+app.get('/resource/invitation/:id', function(req, res){ 
+	Step(
+		function getCollection(){
+			db.collection('invitation', this); 
+		},
+		function findResult(err,collection){
+			collection.findOne({'_id':new BSON.ObjectID(req.params.id)},this);
+		},
+		function generateResponse(err, result){
+			res.send(result);
+		});
+}); 
+
+app.get('/resource/invitation/open/weiboId/:weiboId/page/:page', function(req, res){ 
+	Step(
+		function getCollection(){
+			db.collection('invitation', this); 
+		},
+		function findResult(err,collection){
+			collection.find(
+			{
+				'startDate':{$gte: new Date()}, 
+				$or :[{'inviter.user.weiboId':req.params.weiboId},{'invitees.user.weiboId':req.params.weiboId}]
+			}).skip(req.params.page*8).limit(8).toArray(this);
+		},
+		function generateResponse(err, items){
+			res.send(items);
+		});
+}); 
+
+app.get('/resource/invitation/closed/weiboId/:weiboId/page/:page', function(req, res){ 
+	Step(
+		function getCollection(){
+			db.collection('invitation', this); 
+		},
+		function findResult(err,collection){
+			collection.find(
+			{
+				'startDate':{$lt: new Date()}, 
+				$or :[{'inviter.user.weiboId':req.params.weiboId},{'invitees.user.weiboId':req.params.weiboId}]
+			}).skip(req.params.page*8).limit(8).toArray(this);
+		},
+		function generateResponse(err, items){
+			res.send(items);
+		});
+}); 
+
+app.post('/resource/invitation/:id/status', function(req, res){ 
+	Step(
+		function getCollection(){
+			db.collection('invitation', this); 
+		},
+		function updateData(err,collection){
+			collection.findAndModify(
+				{'_id':new BSON.ObjectID(req.params.id),'invitees.user.weiboId':req.body.weiboId},[],
+				{$set:{'invitees.$.status':req.body.status,'lastUpdateDate':new Date()}}, 
+				{safe:true,new:true}, 
+				this);
+		},
+		function generateResponse(err, item){
+			res.send(item);			
+		});	
+}); 
+
+app.post('/resource/invitation/:id/reply', function(req, res){ 
+	Step(
+		function getCollection(){
+			db.collection('invitation', this); 
+		},
+		function updateData(err,collection){
+			collection.findAndModify(
+				{'_id':new BSON.ObjectID(req.params.id)},[],
+				{$push:{'replyList':req.body}, $set:{'lastUpdateDate':new Date()}}, 
+				{safe:true,new:true}, 
+				this);
+		},
+		function generateResponse(err, item){
+			res.send(item);
+		});	
+}); 
+
+
+
 
 
 http.createServer(app).listen(3000); 
