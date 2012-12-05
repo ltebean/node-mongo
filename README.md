@@ -6,28 +6,37 @@ This project provides a restful api of the invitation service
 API
 ---
 
-1.create an invitation
-post - /resource/invitation 
+### create an invitation
+
+post - /resource/invitation
+
 body - the fully fledged invitaion object that must contain all fields it might need later
 
-2.load an invitation
+### load an invitation
+
 get - /resource/invitation/:id
 
-3.load open invitations
+### load open invitations
+
 get - /resource/invitation/open/weiboId/:weiboId/page/:page
 
-4.load closed invitations
+### load closed invitations
+
 get - /resource/invitation/closed/weiboId/:weiboId/page/:page
 
-5.change status
+### change status
+
 post - /resource/invitation/:id/status
+
 body- {weiboId:"",status:""};
 
-6.reply
+### reply
+
 post - /resource/invitation/:id/reply
+
 body - {content:"",date:new Date(),user:{weiboId:"",weiboName:""...}}
 
-the structure of the invitation object is like this:
+### The structure of the invitation object is like this:
 
 	{
     "_id": "50b3237a0cf235d0ba9143a8",
@@ -78,4 +87,4 @@ the structure of the invitation object is like this:
       ]
     },
     "status": "open"
-  }
+	}
