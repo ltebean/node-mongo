@@ -5,6 +5,7 @@ var invitation=require('./invitation.js');
 var app=express();
 app.configure(function () {
 	app.use(express.bodyParser());
+	app.use(app.router);	
 	app.use(function errorHandler(err, req, res, next) {
 		console.error(err.stack);
 		if (req.xhr) {

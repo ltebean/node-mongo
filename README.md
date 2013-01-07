@@ -75,16 +75,28 @@ body - {content:"",date:new Date(),user:{weiboId:"",weiboName:""...}}
     "startDate": "2012-11-21T16:00:00.000Z",
     "lastUpdateDate": "2012-11-26T08:10:57.749Z",
     "description": "在阿猫一条鱼吃饭chifan",
-    "shop": {
-      "shopId": 2725198,
-      "shopName": "阿猫一条鱼",
-      "address": "杨浦区国顺路587号(近政肃路)",
-      "phoneNo": "13127530310",
-      "latitude": 31.29442,
-      "longtitude": 121.50675,
-      "picUrlList": [
-        "http://i3.dpfile.com/2010-11-08/5764433_m.jpg"
-      ]
-    },
-    "status": "open"
-	}
+    "shopList": [
+      {
+        "shopId": 2725198,
+        "shopName": "阿猫一条鱼",
+        "address": "杨浦区国顺路587号(近政肃路)",
+        "phoneNo": "13127530310",
+        "latitude": 31.29442,
+        "longtitude": 121.50675,
+        "picUrlList": [
+          "http://i3.dpfile.com/2010-11-08/5764433_m.jpg"
+        ]
+      },
+      {
+        "shopId": 2725198,
+        "shopName": "阿猫一条鱼",
+        "address": "杨浦区国顺路587号(近政肃路)",
+        "phoneNo": "13127530310",
+        "latitude": 31.29442,
+        "longtitude": 121.50675,
+        "picUrlList": [
+          "http://i3.dpfile.com/2010-11-08/5764433_m.jpg"
+        ]
+      }
+    ]
+  }
