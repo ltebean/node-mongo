@@ -100,3 +100,16 @@ body - {content:"",date:new Date(),user:{weiboId:"",weiboName:""...}}
         }
       ]
     }
+
+### receive message through websocket
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+    var socket = io.connect('http://192.168.32.84:3000');
+    //first register with weiboId
+    socket.emit('register',weiboId);
+    //then listent on this topic
+    socket.on('news', function (data) {;
+      //data can be:{type:'status|reply',body:{the corresponding body}};
+    });
+    </script>

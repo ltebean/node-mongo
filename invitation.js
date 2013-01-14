@@ -1,6 +1,9 @@
 
 var Step = require('step');
 var mongo = require('mongodb');
+var check = require('validator').check;
+var msg=require('./msg.js');
+
 var BSON = mongo.BSONPure;
 
 var db = new mongo.Db('test', new mongo.Server('localhost', 27017, {auto_reconnect: true}));
@@ -19,6 +22,7 @@ db.open(function(err, db) {
 
 
 exports.create=function(req, res){ 
+	//validateInvitation(req.body);
 	Step(
 		function getCollection(){
 			db.collection('invitation', this); 
@@ -76,24 +80,35 @@ exports.findClosed=function(req, res){
 		});
 }
 
-exports.replyStatus= function(req, res){ 
+exports.replyStatus= function(req, res){
 	Step(
 		function getCollection(){
-			db.collection('invitation', this); 
+			db.collection('invitation', this);
 		},
 		function updateData(err,collection){
 			collection.findAndModify(
 				{'_id':new BSON.ObjectID(req.params.id),'invitees.user.weiboId':req.body.weiboId},[],
-				{$set:{'invitees.$.status':req.body.status,'lastUpdateDate':new Date()}}, 
-				{safe:true,new:true}, 
+				{$set:{'invitees.$.status':req.body.status,'lastUpdateDate':new Date()}},
+				{safe:true,new:true},
 				this);
 		},
-		function generateResponse(err, item){
-			res.send(item);			
-		});	
+		function sendMessage(err,invitation){
+			invitation.invitees.forEach(function(invitee){
+				if(invitee.user.weiboId!=req.body.weiboId){
+					msg.addMessage(invitee.user.weiboId,{type:'status',body:req.body});	
+				}
+			});
+			if(invitation.inviter.user.weiboId!=req.body.weiboId){
+				msg.addMessage(invitation.inviter.user.weiboId,{type:'status',body:req.body});
+			}
+			return invitation;
+		},
+		function generateResponse(err, invitation){
+			res.send(invitation);
+		});
 } 
 
-exports.replyComment=function(req, res){ 
+exports.replyComment=function(req, res){
 	Step(
 		function getCollection(){
 			db.collection('invitation', this); 
@@ -105,7 +120,38 @@ exports.replyComment=function(req, res){
 				{safe:true,new:true}, 
 				this);
 		},
-		function generateResponse(err, item){
-			res.send(item);
+		function sendMessage(err,invitation){
+			invitation.invitees.forEach(function(invitee){
+				if(invitee.user.weiboId!=req.body.user.weiboId){
+					msg.addMessage(invitee.user.weiboId,{type:'reply',body:req.body});	
+				}
+			});
+			if(invitation.inviter.user.weiboId!=req.body.user.weiboId){
+				msg.addMessage(invitation.inviter.user.weiboId,{type:'reply',body:req.body});
+			}
+			return invitation;
+		},
+		function generateResponse(err, invitation){
+			res.send(invitation);
 		});	
+}
+
+
+function validateInvitation(invitation){
+	check(invitation.inviter).isNull();
+	check(invitation.invitees).isNull().isArray();
+	check(invitation.replyList).isNull().isArray();
+	check(invitation.description).isNull();
+	check(invitation.createDate).isNull().isDate();
+	check(invitation.startDate).isNull().isDate();
+}
+
+function validateReply(reply){
+	check(reply.content).notEmpty();
+	check(reply.user).notEmpty();
+}
+
+function validateStatus(status){
+	check(status.weiboId).notEmpty();
+	check(status.status).notEmpty();
 }

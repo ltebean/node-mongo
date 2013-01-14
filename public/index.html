@@ -1,0 +1,15 @@
+<html>
+<head>
+	<script src="/socket.io/socket.io.js"></script>
+	<script>
+	var socket = io.connect('http://192.168.32.84:3000');
+	socket.emit('register','2134062323');
+	socket.on('news', function (data) {
+		console.log(data);
+	});
+	</script>
+	<script src="http://code.jquery.com/jquery-latest.js"></script>
+</head>
+<body>
+</body>
+</html>
