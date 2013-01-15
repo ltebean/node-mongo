@@ -1,13 +1,25 @@
 
 var listener={};
 
+var msgToRead={};
+
 exports.addListener=function (weiboId,callback) {
 	listener.weiboId=callback;
+	if(msgToRead.weiboId){
+		callback(msgToRead.weiboId);
+		delete msgToRead.weiboId;
+	}
 };
 
 exports.addMessage=function(weiboId,msg) {
 	if(listener.weiboId){
-		listener.weiboId(msg);
+		//console.log('send to'+weiboId);
+		listener.weiboId([msg]);
+	}else{
+		if(!msgToRead.weiboId){
+			msgToRead.weiboId=[];
+		}
+		msgToRead.weiboId.push(msg);
 	}
 };
 

@@ -34,7 +34,7 @@ io.sockets.on('connection', function (socket) {
 		msg.addListener(weiboId,function(msg){
 			socket.emit('news',msg);
 		});
-		msg.addMessage(weiboId,'hahaha');
+		//msg.addMessage(weiboId,'hahaha');
 	});
 
 	socket.on('disconnect', function () {

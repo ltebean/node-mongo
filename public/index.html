@@ -5,7 +5,7 @@
 	var socket = io.connect('http://192.168.32.84:3000');
 	socket.emit('register','2134062323');
 	socket.on('news', function (data) {
-		console.log(data);
+		alert(data[0].type);
 	});
 	</script>
 	<script src="http://code.jquery.com/jquery-latest.js"></script>
