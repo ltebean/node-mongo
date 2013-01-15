@@ -5,7 +5,7 @@ var db = require('./db.js').sharedDB;
 var listener={};
 
 exports.addListener=function (weiboId,callback) {
-	listener.weiboId=callback;
+	listener[weiboId]=callback;
 	Step(
 		function getCollection(){
 			db.collection('msg', this); 
@@ -24,12 +24,14 @@ exports.addListener=function (weiboId,callback) {
 				callback(result.msg);
 			}
 		});
+		console.dir(listener);
+
 };
 
 exports.addMessage=function(weiboId,msg) {
-	if(listener.weiboId){
+	if(listener[weiboId]){
 		//console.log('send to'+weiboId);
-		listener.weiboId([msg]);
+		listener[weiboId]([msg]);
 
 	}else{
 		Step(
@@ -48,9 +50,10 @@ exports.addMessage=function(weiboId,msg) {
 };
 
 exports.removeListener=function(weiboId){
-	if(listener.weiboId){
-		delete listener.weiboId;
+	if(listener[weiboId]){
+		delete listener[weiboId];
 	}
+	console.dir(listener);
 };
 
 
