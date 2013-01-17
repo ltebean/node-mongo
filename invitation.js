@@ -17,6 +17,7 @@ exports.create=function(req, res){
 		function insertData(err,collection){
 			if (err) throw err;
 			req.body.startDate=new Date(req.body.startDate);
+			req.body.createDate=new Date(req.body.createDate);
 			collection.insert(req.body, {safe:true}, this)
 		},
 		function sendMessage(err,result){
@@ -58,7 +59,7 @@ exports.findOpen=function(req, res){
 			collection.find({
 				'startDate':{$gte: new Date()}, 
 				$or :[{'inviter.user.weiboId':req.params.weiboId},{'invitees.user.weiboId':req.params.weiboId}]
-			}).skip(req.params.page*8).limit(8).toArray(this);
+			}).sort({_id:-1}).skip(req.params.page*8).limit(8).toArray(this);
 		},
 		function generateResponse(err, item){
 			if (err) throw err;
@@ -76,7 +77,7 @@ exports.findClosed=function(req, res){
 			collection.find({
 				'startDate':{$lt: new Date()}, 
 				$or :[{'inviter.user.weiboId':req.params.weiboId},{'invitees.user.weiboId':req.params.weiboId}]
-			}).skip(req.params.page*8).limit(8).toArray(this);
+			}).sort({_id:-1}).skip(req.params.page*8).limit(8).toArray(this);
 		},
 		function generateResponse(err, item){
 			if (err) throw err;
