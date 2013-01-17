@@ -111,6 +111,6 @@ body - {content:"",date:new Date(),user:{weiboId:"",weiboName:""...}}
         // then listent on this topic
         socket.on('news', function (data) {;
             // data is an array,the element is like this:
-            // {type:'status|reply',body:{the corresponding body}};
+            // {type:'new|status|reply',body:{the corresponding body}};
         });
     </script>

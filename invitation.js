@@ -18,9 +18,17 @@ exports.create=function(req, res){
 			if (err) throw err;
 			collection.insert(req.body, {safe:true}, this)
 		},
-		function generateResponse(err, result){
+		function sendMessage(err,result){
 			if (err) throw err;
-			res.send(result[0]);		
+			invitation.invitees.forEach(function(invitee){
+				msg.addMessage(invitee.user.weiboId,{type:'new',body:result[0]});	
+			});
+			msg.addMessage(invitation.inviter.user.weiboId,{type:'new',body:result[0]});
+			return result[0];
+		},
+		function generateResponse(err, invitation){
+			if (err) throw err;
+			res.send(invitation);		
 		});	
 } 
 
@@ -91,13 +99,9 @@ exports.replyStatus= function(req, res){
 		function sendMessage(err,invitation){
 			if (err) throw err;
 			invitation.invitees.forEach(function(invitee){
-				if(invitee.user.weiboId!=req.body.weiboId){
-					msg.addMessage(invitee.user.weiboId,{type:'status',body:req.body});	
-				}
+				msg.addMessage(invitee.user.weiboId,{type:'status',body:req.body});	
 			});
-			if(invitation.inviter.user.weiboId!=req.body.weiboId){
-				msg.addMessage(invitation.inviter.user.weiboId,{type:'status',body:req.body});
-			}
+			msg.addMessage(invitation.inviter.user.weiboId,{type:'status',body:req.body});
 			return invitation;
 		},
 		function generateResponse(err, invitation){
@@ -122,13 +126,9 @@ exports.replyComment=function(req, res){
 		function sendMessage(err,invitation){
 			if (err) throw err;
 			invitation.invitees.forEach(function(invitee){
-				if(invitee.user.weiboId!=req.body.user.weiboId){
-					msg.addMessage(invitee.user.weiboId,{type:'reply',body:req.body});	
-				}
+				msg.addMessage(invitee.user.weiboId,{type:'reply',body:req.body});	
 			});
-			if(invitation.inviter.user.weiboId!=req.body.user.weiboId){
-				msg.addMessage(invitation.inviter.user.weiboId,{type:'reply',body:req.body});
-			}
+			msg.addMessage(invitation.inviter.user.weiboId,{type:'reply',body:req.body});
 			return invitation;
 		},
 		function generateResponse(err, invitation){
