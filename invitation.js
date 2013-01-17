@@ -58,7 +58,7 @@ exports.findOpen=function(req, res){
 			if (err) throw err;
 			collection.find({
 				'startDate':{$gte: new Date()}, 
-				$or :[{'inviter.user.weiboId':req.params.weiboId},{'invitees':{'$elemMatch':{"user.weiboId":req.params.weiboId}}}]
+				$or :[{'inviter.user.weiboId':req.params.weiboId},{'invitees':{$elemMatch:{"user.weiboId":req.params.weiboId}}}]
 			}).sort({_id:-1}).skip(req.params.page*8).limit(8).toArray(this);
 		},
 		function generateResponse(err, item){
@@ -76,7 +76,7 @@ exports.findClosed=function(req, res){
 			if (err) throw err;
 			collection.find({
 				'startDate':{$lt: new Date()}, 
-				$or :[{'inviter.user.weiboId':req.params.weiboId},{'invitees':{'$elemMatch':{"user.weiboId":req.params.weiboId}}}]
+				$or :[{'inviter.user.weiboId':req.params.weiboId},{'invitees':{$elemMatch:{"user.weiboId":req.params.weiboId}}}]
 			}).sort({_id:-1}).skip(req.params.page*8).limit(8).toArray(this);
 		},
 		function generateResponse(err, item){
