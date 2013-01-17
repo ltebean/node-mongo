@@ -5,7 +5,7 @@ var check = require('validator').check;
 var msg=require('./msg.js');
 var db = require('./db.js').sharedDB;
 var BSON = mongo.BSONPure;
-
+var Timestamp =mongo.Timestamp;
 
 
 exports.create=function(req, res){ 
@@ -16,14 +16,15 @@ exports.create=function(req, res){
 		},
 		function insertData(err,collection){
 			if (err) throw err;
+			req.body.startDate=new Date(req.body.startDate);
 			collection.insert(req.body, {safe:true}, this)
 		},
 		function sendMessage(err,result){
 			if (err) throw err;
-			invitation.invitees.forEach(function(invitee){
+			result[0].invitees.forEach(function(invitee){
 				msg.addMessage(invitee.user.weiboId,{type:'new',body:result[0]});	
 			});
-			msg.addMessage(invitation.inviter.user.weiboId,{type:'new',body:result[0]});
+			msg.addMessage(result[0].inviter.user.weiboId,{type:'new',body:result[0]});
 			return result[0];
 		},
 		function generateResponse(err, invitation){
