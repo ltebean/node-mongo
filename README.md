@@ -36,6 +36,12 @@ post - /resource/invitation/:id/reply
 
 body - {content:"",date:new Date(),user:{weiboId:"",weiboName:""...}}
 
+### get city and shop
+
+get - /resource/cities
+
+get - /resource/shop/:id
+
 ### The structure of the invitation object is like this:
 
 	{
@@ -100,6 +106,8 @@ body - {content:"",date:new Date(),user:{weiboId:"",weiboName:""...}}
         }
       ]
     }
+
+    
 
 ### receive message through websocket
 

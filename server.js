@@ -3,6 +3,7 @@ var http = require('http');
 var util = require("util");
 var invitation=require('./invitation.js');
 var msg=require('./msg.js');
+var crawler  = require('./crawler.js');
 
 var app=express();
 app.configure(function () {
@@ -25,6 +26,8 @@ app.get('/resource/invitation/open/weiboId/:weiboId/page/:page', invitation.find
 app.get('/resource/invitation/closed/weiboId/:weiboId/page/:page', invitation.findClosed); 
 app.post('/resource/invitation/:id/status', invitation.replyStatus); 
 app.post('/resource/invitation/:id/reply', invitation.replyComment); 
+app.get('/resource/shop/:id', crawler.findshop);
+app.get('/resource/cities', crawler.findcities);
 
 
 io.sockets.on('connection', function (socket) {
