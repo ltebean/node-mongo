@@ -85,7 +85,7 @@ var searchDPShops=function(params,callback){
 		}
 	}
 	request.send(options,function(body){
-		console.log(body);
+		//console.log(body);
 		callback(body);
 	})
 
