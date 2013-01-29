@@ -26,8 +26,10 @@ app.get('/resource/invitation/open/weiboId/:weiboId/page/:page', invitation.find
 app.get('/resource/invitation/closed/weiboId/:weiboId/page/:page', invitation.findClosed); 
 app.post('/resource/invitation/:id/status', invitation.replyStatus); 
 app.post('/resource/invitation/:id/reply', invitation.replyComment); 
-app.get('/resource/shop/:id', crawler.findshop);
-app.get('/resource/cities', crawler.findcities);
+app.get('/resource/shop/:id', crawler.findShop);
+app.get('/resource/cities', crawler.findCities);
+app.get('/resource/shop', crawler.searchShop);
+
 
 
 io.sockets.on('connection', function (socket) {
