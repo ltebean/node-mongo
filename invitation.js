@@ -16,8 +16,11 @@ exports.create=function(req, res){
 			crawler.fetchShop(req.body.shopList[0].shopId,this);
 		},
 		function mergeResult(shopInfo){
-			req.body.shopList[0].latitude=shopInfo.latitude;
-			req.body.shopList[0].longtitude=shopInfo.longtitude;
+			if(shopInfo){
+				req.body.shopList[0].latitude=shopInfo.latitude;
+				req.body.shopList[0].longtitude=shopInfo.longtitude;
+				req.body.shopList[0].picUrlList=shopInfo.picUrlList;
+			}
 			return;
 		},
 		function getCollection(){

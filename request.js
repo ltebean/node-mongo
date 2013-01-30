@@ -4,7 +4,7 @@ exports.send=function(options,callback){
 
 	var timer=setTimeout(function() {
 		req.emit('timeout',{message:'have been timeout...'});
-	}, options.timeout||8000);
+	}, options.timeout||4000);
 
 	var req=http.get(options, function(res) {
 		var html='';

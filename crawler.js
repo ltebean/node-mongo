@@ -64,6 +64,9 @@ var findpoi=function (a){
 	}
 
 var getShopInfo = function(str){
+	if(str===''){
+		return undefined;
+	}
 	shop = {}
 	var results = new RegExp('poi: \'(.+)\'').exec(str);
 	var poi=findpoi(results[1]);
