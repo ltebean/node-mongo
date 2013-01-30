@@ -3,6 +3,7 @@ var Step = require('step');
 var mongo = require('mongodb');
 var check = require('validator').check;
 var msg=require('./msg.js');
+var crawler=require('./crawler.js');
 var db = require('./db.js').sharedDB;
 var BSON = mongo.BSONPure;
 var Timestamp =mongo.Timestamp;
@@ -11,6 +12,14 @@ var Timestamp =mongo.Timestamp;
 exports.create=function(req, res){ 
 	//validateInvitation(req.body);
 	Step(
+		function fetchPoi(){
+			crawler.fetchShop(req.body.shopList[0].shopId,this);
+		},
+		function mergeResult(shopInfo){
+			req.body.shopList[0].latitude=shopInfo.latitude;
+			req.body.shopList[0].longtitude=shopInfo.longtitude;
+			return;
+		},
 		function getCollection(){
 			db.collection('invitation', this); 
 		},
