@@ -68,7 +68,7 @@ exports.findOpen=function(req, res){
 		},
 		function findResult(err,collection){
 			if (err) throw err;
-			Date date=new Date();
+			var date=new Date();
 			date.setHours(date.getHours()+2);
 			collection.find({
 				'startDate':{$gte: date}, 
@@ -88,7 +88,7 @@ exports.findClosed=function(req, res){
 		},
 		function findResult(err,collection){
 			if (err) throw err;
-			Date date=new Date();
+			var date=new Date();
 			date.setHours(date.getHours()+2);
 			collection.find({
 				'startDate':{$lt: date}, 
