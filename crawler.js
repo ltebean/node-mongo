@@ -84,7 +84,6 @@ var searchDPShops=function(params,callback){
 		}
 	}
 	request.send(options,function(body){
-		//console.log(body);
 		callback(body);
 	})
 
@@ -125,7 +124,7 @@ function getUrl(param)
 	 var queryString = queryArray.join("&");
 
 	 var url = apiPath + "?" + queryString;
-	 return url;
+	 return encodeURI(url);
 }
 
 var CryptoJS=CryptoJS||function(i,m){var p={},h=p.lib={},n=h.Base=function(){function a(){}return{extend:function(b){a.prototype=this;var c=new a;b&&c.mixIn(b);c.$super=this;return c},create:function(){var a=this.extend();a.init.apply(a,arguments);return a},init:function(){},mixIn:function(a){for(var c in a)a.hasOwnProperty(c)&&(this[c]=a[c]);a.hasOwnProperty("toString")&&(this.toString=a.toString)},clone:function(){return this.$super.extend(this)}}}(),o=h.WordArray=n.extend({init:function(a,b){a=
