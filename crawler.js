@@ -12,22 +12,14 @@ exports.findCities = function(req,res){
 	})
 }
 
-exports.findShop = function(req,res){
-	// console.log("get in "+req.params.id);
-	fetchShop(req.params.id,function(shop){
-		res.send(shop);
-	})
-}
-
 exports.searchShop=function(req,res){
 	searchDPShops(req.query,function(data){
 		res.send(data);
 	});
 }
 
-exports.fetchShop=fetchShop;
 
-var fetchShop=function(shopId,callback){
+exports.fetchShop=function(shopId,callback){
 	var path = '/shop/'+shopId;
 	options = {
 		host: 'www.dianping.com',

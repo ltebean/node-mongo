@@ -21,9 +21,9 @@ exports.create=function(req, res){
 				req.body.shopList[0].longtitude=shopInfo.longtitude;
 				req.body.shopList[0].picUrlList=shopInfo.picUrlList;
 			}
-			return;
+			return 'ok';
 		},
-		function getCollection(){
+		function getCollection(err,status){
 			db.collection('invitation', this); 
 		},
 		function insertData(err,collection){
@@ -68,8 +68,10 @@ exports.findOpen=function(req, res){
 		},
 		function findResult(err,collection){
 			if (err) throw err;
+			Date date=new Date();
+			date.setHours(date.getHours()+2);
 			collection.find({
-				'startDate':{$gte: new Date()}, 
+				'startDate':{$gte: date}, 
 				$or :[{'inviter.user.weiboId':req.params.weiboId},{'invitees':{$elemMatch:{"user.weiboId":req.params.weiboId}}}]
 			}).sort({_id:-1}).skip(req.params.page*8).limit(8).toArray(this);
 		},
@@ -86,8 +88,10 @@ exports.findClosed=function(req, res){
 		},
 		function findResult(err,collection){
 			if (err) throw err;
+			Date date=new Date();
+			date.setHours(date.getHours()+2);
 			collection.find({
-				'startDate':{$lt: new Date()}, 
+				'startDate':{$lt: date}, 
 				$or :[{'inviter.user.weiboId':req.params.weiboId},{'invitees':{$elemMatch:{"user.weiboId":req.params.weiboId}}}]
 			}).sort({_id:-1}).skip(req.params.page*8).limit(8).toArray(this);
 		},
