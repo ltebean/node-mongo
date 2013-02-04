@@ -1,5 +1,6 @@
 var apns = require('apns'), notification, options, connection;
 var db = require('./db.js').sharedDB;
+var Step = require('step');
 
 options = {
    keyFile : "conf/dev/key.pem",
