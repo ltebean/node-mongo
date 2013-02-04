@@ -162,7 +162,7 @@ exports.replyStatus= function(req, res){
 		function updateData(err,collection){
 			if (err) throw err;
 			collection.findAndModify(
-				{'_id':new BSON.ObjectID(req.params.id),'invitees.user.weiboId':req.body.weiboId},[],
+				{'_id':new BSON.ObjectID(req.params.id),'invitees.user.weiboId':req.body.user.weiboId},[],
 				{$set:{'invitees.$.status':req.body.status,'lastUpdateDate':new Date()}},
 				{safe:true,new:true},
 				this);
