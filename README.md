@@ -28,7 +28,7 @@ get - /resource/invitation/closed/weiboId/:weiboId/page/:page
 
 post - /resource/invitation/:id/status
 
-body- {weiboId:"",status:""};
+body- {user:{},status:""};
 
 ### reply
 
@@ -40,7 +40,12 @@ body - {content:"",date:new Date(),user:{weiboId:"",weiboName:""...}}
 
 get - /resource/cities
 
-get - /resource/shop/:id
+get - /resource/shop
+
+### apns registration
+
+post - /resource/apns/registration
+body - {user:{},deviceToken:''}
 
 ### The structure of the invitation object is like this:
 

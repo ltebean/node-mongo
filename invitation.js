@@ -178,8 +178,11 @@ exports.replyStatus= function(req, res){
 		function sendNotification(err,invitation){
 			if (err) throw err;
 			var msg=req.body.user.weiboName+'发表了回复';
+			if(invitation.inviter.user.weiboId!=req.body.user.weiboId){
+				notification.send(invitation.inviter.user.weiboId,msg,{});	
+			}
 			invitation.invitees.forEach(function(invitee){
-				if(invitee.user.weiboId!=req.body.weiboId){
+				if(invitee.user.weiboId!=req.body.user.weiboId){
 					notification.send(invitee.user.weiboId,msg,{});	
 				}
 			 });
