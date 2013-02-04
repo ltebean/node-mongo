@@ -31,7 +31,7 @@ app.post('/resource/invitation/:id/reply', invitation.replyComment);
 app.get('/resource/cities', crawler.findCities);
 app.get('/resource/shop', crawler.searchShop);
 
-app.get('/resource/apns/registration', notification.register);
+app.post('/resource/apns/registration', notification.register);
 
 // var io= require('socket.io').listen(server);
 // io.sockets.on('connection', function (socket) {
