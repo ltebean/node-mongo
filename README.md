@@ -45,6 +45,7 @@ get - /resource/shop
 ### apns registration
 
 post - /resource/apns/registration
+
 body - {user:{},deviceToken:''}
 
 ### The structure of the invitation object is like this:
