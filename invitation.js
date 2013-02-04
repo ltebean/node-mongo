@@ -5,10 +5,55 @@ var check = require('validator').check;
 var msg=require('./msg.js');
 var crawler=require('./crawler.js');
 var db = require('./db.js').sharedDB;
+var notification=require('./notification.js');
 var BSON = mongo.BSONPure;
 var Timestamp =mongo.Timestamp;
 
 
+exports.welcome=function(req, res){ 
+	//validateInvitation(req.body);
+	Step(
+		function getCollection(){
+			db.collection('invitation', this); 
+		},
+		function insertData(err,collection){
+			if (err) throw err;
+			var invitation={
+				inviter:{
+					user:{
+						weiboId:'123',
+						weiboName:'',
+						weiboIcon: 'http://tp4.sinaimg.cn/2134062323/180/5644408802/1',
+        				weiboIconSmall: 'http://tp4.sinaimg.cn/2134062323/50/5644408802/1'
+					}
+				},
+				shopList:[{
+					shopName:'',
+					picUrlList:['']
+				}],
+				startDate:new Date(),
+				invitees:[{
+					user:req.body,
+					status:'accept'
+				}],
+				replyList: [{
+     				content: 'nice',
+     				user: {
+        				weiboId: '1794581765',
+       					weiboName: '福禄钱恩',
+        				weiboIcon: 'http://tp2.sinaimg.cn/1794581765/180/40008135152/0',
+        				weiboIconSmall: 'http://tp2.sinaimg.cn/1794581765/50/40008135152/0'
+      				},
+      				date: new Date()
+    			}],
+			};
+			collection.insert(invitation, {safe:true}, this)
+		},
+		function generateResponse(err, invitation){
+			if (err) throw err;
+			res.send(invitation);		
+		});	
+} 
 exports.create=function(req, res){ 
 	//validateInvitation(req.body);
 	Step(
@@ -29,16 +74,24 @@ exports.create=function(req, res){
 		function insertData(err,collection){
 			if (err) throw err;
 			req.body.startDate=new Date(req.body.startDate);
-			req.body.createDate=new Date(req.body.createDate);
+			req.body.createDate=new Date();
 			collection.insert(req.body, {safe:true}, this)
 		},
 		function sendMessage(err,result){
 			if (err) throw err;
-			result[0].invitees.forEach(function(invitee){
-				msg.addMessage(invitee.user.weiboId,{type:'new',body:result[0]});	
-			});
-			msg.addMessage(result[0].inviter.user.weiboId,{type:'new',body:result[0]});
+			// result[0].invitees.forEach(function(invitee){
+			// 	msg.addMessage(invitee.user.weiboId,{type:'new',body:result[0]});	
+			// });
+			// msg.addMessage(result[0].inviter.user.weiboId,{type:'new',body:result[0]});
 			return result[0];
+		},
+		function sendNotification(err,invitation){
+			if (err) throw err;
+			invitation.invitees.forEach(function(invitee){
+				var msg=invitation.inviter.user.weiboName+'发起了一个活动('+invitation.shopList[0].shopName+')';
+				notification.send(invitee.user.weiboId,msg,{});	
+			 });
+			return invitation;
 		},
 		function generateResponse(err, invitation){
 			if (err) throw err;
@@ -69,7 +122,7 @@ exports.findOpen=function(req, res){
 		function findResult(err,collection){
 			if (err) throw err;
 			var date=new Date();
-			date.setHours(date.getHours()+2);
+			date.setHours(date.getHours()-2);
 			collection.find({
 				'startDate':{$gte: date}, 
 				$or :[{'inviter.user.weiboId':req.params.weiboId},{'invitees':{$elemMatch:{"user.weiboId":req.params.weiboId}}}]
@@ -89,7 +142,7 @@ exports.findClosed=function(req, res){
 		function findResult(err,collection){
 			if (err) throw err;
 			var date=new Date();
-			date.setHours(date.getHours()+2);
+			date.setHours(date.getHours()-2);
 			collection.find({
 				'startDate':{$lt: date}, 
 				$or :[{'inviter.user.weiboId':req.params.weiboId},{'invitees':{$elemMatch:{"user.weiboId":req.params.weiboId}}}]
@@ -116,10 +169,20 @@ exports.replyStatus= function(req, res){
 		},
 		function sendMessage(err,invitation){
 			if (err) throw err;
+			// invitation.invitees.forEach(function(invitee){
+			// 	msg.addMessage(invitee.user.weiboId,{type:'status',body:req.body});	
+			// });
+			// msg.addMessage(invitation.inviter.user.weiboId,{type:'status',body:req.body});
+			return invitation;
+		},
+		function sendNotification(err,invitation){
+			if (err) throw err;
+			var msg=req.body.user.weiboName+'发表了回复';
 			invitation.invitees.forEach(function(invitee){
-				msg.addMessage(invitee.user.weiboId,{type:'status',body:req.body});	
-			});
-			msg.addMessage(invitation.inviter.user.weiboId,{type:'status',body:req.body});
+				if(invitee.user.weiboId!=req.body.weiboId){
+					notification.send(invitee.user.weiboId,msg,{});	
+				}
+			 });
 			return invitation;
 		},
 		function generateResponse(err, invitation){
@@ -143,10 +206,23 @@ exports.replyComment=function(req, res){
 		},
 		function sendMessage(err,invitation){
 			if (err) throw err;
+			// invitation.invitees.forEach(function(invitee){
+			// 	msg.addMessage(invitee.user.weiboId,{type:'reply',body:req.body});	
+			// });
+			// msg.addMessage(invitation.inviter.user.weiboId,{type:'reply',body:req.body});
+			return invitation;
+		},
+		function sendNotification(err,invitation){
+			if (err) throw err;
+			var msg=req.body.user.weiboName+'发表了回复:'+req.body.content;
+			if(invitation.inviter.user.weiboId!=req.body.user.weiboId){
+				notification.send(invitation.inviter.user.weiboId,msg,{});	
+			}
 			invitation.invitees.forEach(function(invitee){
-				msg.addMessage(invitee.user.weiboId,{type:'reply',body:req.body});	
-			});
-			msg.addMessage(invitation.inviter.user.weiboId,{type:'reply',body:req.body});
+				if(invitee.user.weiboId!=req.body.user.weiboId){
+					notification.send(invitee.user.weiboId,msg,{});	
+				}
+			 });
 			return invitation;
 		},
 		function generateResponse(err, invitation){
@@ -174,3 +250,6 @@ function validateStatus(status){
 	check(status.weiboId).notEmpty();
 	check(status.status).notEmpty();
 }
+
+
+
