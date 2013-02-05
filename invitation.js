@@ -21,14 +21,16 @@ exports.welcome=function(req, res){
 			var invitation={
 				inviter:{
 					user:{
-						weiboId:'123',
-						weiboName:'',
+						weiboId:'3118093851',
+						weiboName:'party客户端',
 						weiboIcon: 'http://tp4.sinaimg.cn/2134062323/180/5644408802/1',
         				weiboIconSmall: 'http://tp4.sinaimg.cn/2134062323/50/5644408802/1'
 					}
 				},
 				shopList:[{
-					shopName:'',
+					shopId:'0',
+					shopName:'欢迎加入party~',
+					address:'',
 					picUrlList:['']
 				}],
 				startDate:new Date(),
@@ -64,7 +66,7 @@ exports.create=function(req, res){
 			if(shopInfo){
 				req.body.shopList[0].latitude=shopInfo.latitude;
 				req.body.shopList[0].longtitude=shopInfo.longtitude;
-				req.body.shopList[0].picUrlList=shopInfo.picUrlList;
+				//req.body.shopList[0].picUrlList=shopInfo.picUrlList;
 			}
 			return 'ok';
 		},
@@ -250,7 +252,7 @@ function validateReply(reply){
 }
 
 function validateStatus(status){
-	check(status.weiboId).notEmpty();
+	check(status.user).notEmpty();
 	check(status.status).notEmpty();
 }
 
