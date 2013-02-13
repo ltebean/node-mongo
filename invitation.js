@@ -22,16 +22,16 @@ exports.welcome=function(req, res){
 				inviter:{
 					user:{
 						weiboId:'3118093851',
-						weiboName:'party客户端',
-						weiboIcon: 'http://tp4.sinaimg.cn/2134062323/180/5644408802/1',
-        				weiboIconSmall: 'http://tp4.sinaimg.cn/2134062323/50/5644408802/1'
+						weiboName:"Let's Party",
+						weiboIcon: 'http://tp4.sinaimg.cn/3118093851/180/40015293290/1',
+        				weiboIconSmall: 'http://tp4.sinaimg.cn/3118093851/180/40015293290/1'
 					}
 				},
 				shopList:[{
 					shopId:'0',
-					shopName:'欢迎加入party~',
-					address:'',
-					picUrlList:['']
+					shopName:"欢迎加入Let's Party~",
+					address:"Let's Party官方微博",
+					picUrlList:['http://www.brightschool.com/images/photos/Wagner/stock-illustration-11386084-children-birthday-party-cartoon.jpg']
 				}],
 				startDate:new Date(),
 				invitees:[{
@@ -39,12 +39,12 @@ exports.welcome=function(req, res){
 					status:'accept'
 				}],
 				replyList: [{
-     				content: 'nice',
+     				content: "欢迎加入Let's Party~",
      				user: {
-        				weiboId: '1794581765',
-       					weiboName: '福禄钱恩',
-        				weiboIcon: 'http://tp2.sinaimg.cn/1794581765/180/40008135152/0',
-        				weiboIconSmall: 'http://tp2.sinaimg.cn/1794581765/50/40008135152/0'
+        				weiboId: '3118093851',
+       					weiboName: "Let's Party",
+        				weiboIcon: 'http://tp4.sinaimg.cn/3118093851/180/40015293290/1',
+        				weiboIconSmall: 'http://tp4.sinaimg.cn/3118093851/180/40015293290/1'
       				},
       				date: new Date()
     			}],
