@@ -68,8 +68,8 @@ var getShopInfo = function(str){
 	//shop.shopPower=new RegExp('shopPower:(.+),').exec(str)[1].trim();
 	//shop.address = new RegExp('<span itemprop="street-address">(.+)</span>').exec(str)[1].trim();
 	//shop.phoneNo = new RegExp('<strong itemprop="tel">(.+)</strong>').exec(str)[1].trim();
-	shop.picUrlList = [];
-	shop.picUrlList.push(new RegExp('src="(.+)_m.jpg"').exec(str)[1].trim()+"_m.jpg");
+	//shop.picUrlList = [];
+	//shop.picUrlList.push(new RegExp('src="(.+)_m.jpg"').exec(str)[1].trim()+"_m.jpg");
 	return shop;
 
 }
