@@ -231,7 +231,7 @@ exports.replyComment=function(req, res){
 			var msg=req.body.user.weiboName+'发表了回复:'+req.body.content;
 			var weiboIds=[];
 			if(invitation.inviter.user.weiboId!=req.body.user.weiboId){
-				notification.send(invitation.inviter.user.weiboId,msg,{});	
+				weiboIds.push(invitation.inviter.user.weiboId);
 			}
 			for (var i = 0; i < invitation.invitees.length; i++) {
 				if(invitation.invitees[i].user.weiboId!=req.body.user.weiboId){
