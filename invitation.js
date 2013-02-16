@@ -192,7 +192,7 @@ exports.replyStatus= function(req, res){
 				weiboIds.push(invitation.inviter.user.weiboId);
 			}
 			for (var i = 0; i < invitation.invitees.length; i++) {
-				if(invitee.user.weiboId!=req.body.user.weiboId){
+				if(invitation.invitees[i].user.weiboId!=req.body.user.weiboId){
 					weiboIds.push(invitation.invitees[i].user.weiboId);
 				}
 			}
@@ -234,7 +234,7 @@ exports.replyComment=function(req, res){
 				notification.send(invitation.inviter.user.weiboId,msg,{});	
 			}
 			for (var i = 0; i < invitation.invitees.length; i++) {
-				if(invitee.user.weiboId!=req.body.user.weiboId){
+				if(invitation.invitees[i].user.weiboId!=req.body.user.weiboId){
 					weiboIds.push(invitation.invitees[i].user.weiboId);
 				}
 			}		
