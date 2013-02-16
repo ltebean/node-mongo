@@ -11,14 +11,14 @@ options = {
 
 var connection = new apns.Connection(options);
 
-exports.send=function(weiboId,msg,payload){
+exports.send=function(weiboIds,msg,payload){
 	Step(
 		function getCollection(){
 			db.collection('apns', this); 
 		},
 		function findResult(err,collection){
 			if (err) throw err;
-			collection.find({'user.weiboId':weiboId}).toArray(this);
+			collection.find({'user.weiboId':{$in:weiboIds}}).toArray(this);
 		},
 		function generateResponse(err, results){
 			if(err) throw err;

@@ -89,10 +89,12 @@ exports.create=function(req, res){
 		},
 		function sendNotification(err,invitation){
 			if (err) throw err;
-			invitation.invitees.forEach(function(invitee){
-				var msg=invitation.inviter.user.weiboName+'发起了一个活动('+invitation.shopList[0].shopName+')';
-				notification.send(invitee.user.weiboId,msg,{});	
-			 });
+			var weiboIds=[];
+			for (var i = 0; i < invitation.invitees.length; i++) {
+				weiboIds.push(invitation.invitees[i].user.weiboId);
+			}
+			var msg=invitation.inviter.user.weiboName+'发起了一个活动('+invitation.shopList[0].shopName+')';
+			notification.send(weiboIds,msg,{});	
 			return invitation;
 		},
 		function generateResponse(err, invitation){
@@ -179,15 +181,22 @@ exports.replyStatus= function(req, res){
 		},
 		function sendNotification(err,invitation){
 			if (err) throw err;
-			var msg=req.body.user.weiboName+'发表了回复';
-			if(invitation.inviter.user.weiboId!=req.body.user.weiboId){
-				notification.send(invitation.inviter.user.weiboId,msg,{});	
+			var weiboIds=[];
+			var msg='';
+			if(req.body.status==='accept'){
+				msg=req.body.user.weiboName+'参加了活动('+invitation.shopList[0].shopName+')';
+			}else{
+				msg=req.body.user.weiboName+'拒绝了活动('+invitation.shopList[0].shopName+')';
 			}
-			invitation.invitees.forEach(function(invitee){
+			if(invitation.inviter.user.weiboId!=req.body.user.weiboId){
+				weiboIds.push(invitation.inviter.user.weiboId);
+			}
+			for (var i = 0; i < invitation.invitees.length; i++) {
 				if(invitee.user.weiboId!=req.body.user.weiboId){
-					notification.send(invitee.user.weiboId,msg,{});	
+					weiboIds.push(invitation.invitees[i].user.weiboId);
 				}
-			 });
+			}
+			notification.send(weiboIds,msg,{});	
 			return invitation;
 		},
 		function generateResponse(err, invitation){
@@ -220,14 +229,16 @@ exports.replyComment=function(req, res){
 		function sendNotification(err,invitation){
 			if (err) throw err;
 			var msg=req.body.user.weiboName+'发表了回复:'+req.body.content;
+			var weiboIds=[];
 			if(invitation.inviter.user.weiboId!=req.body.user.weiboId){
 				notification.send(invitation.inviter.user.weiboId,msg,{});	
 			}
-			invitation.invitees.forEach(function(invitee){
+			for (var i = 0; i < invitation.invitees.length; i++) {
 				if(invitee.user.weiboId!=req.body.user.weiboId){
-					notification.send(invitee.user.weiboId,msg,{});	
+					weiboIds.push(invitation.invitees[i].user.weiboId);
 				}
-			 });
+			}		
+			notification.send(weiboIds,msg,{});	
 			return invitation;
 		},
 		function generateResponse(err, invitation){
