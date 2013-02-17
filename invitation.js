@@ -23,14 +23,16 @@ exports.welcome=function(req, res){
 					user:{
 						weiboId:'3118093851',
 						weiboName:"Let's Party",
-						weiboIcon: 'http://tp4.sinaimg.cn/3118093851/180/40015293290/1',
-        				weiboIconSmall: 'http://tp4.sinaimg.cn/3118093851/180/40015293290/1'
+						weiboIcon: 'http://tp4.sinaimg.cn/3118093851/180/40015481944/1',
+						weiboIconSmall: 'http://tp4.sinaimg.cn/3118093851/180/40015481944/1'
 					}
 				},
 				shopList:[{
 					shopId:'0',
 					shopName:"欢迎加入Let's Party~",
 					address:"Let's Party官方微博",
+					latitude:"31.23136",
+					longtitude:"121.47004",
 					picUrlList:['http://www.brightschool.com/images/photos/Wagner/stock-illustration-11386084-children-birthday-party-cartoon.jpg']
 				}],
 				startDate:new Date(),
@@ -39,15 +41,15 @@ exports.welcome=function(req, res){
 					status:'accept'
 				}],
 				replyList: [{
-     				content: "欢迎加入Let's Party~",
-     				user: {
-        				weiboId: '3118093851',
-       					weiboName: "Let's Party",
-        				weiboIcon: 'http://tp4.sinaimg.cn/3118093851/180/40015293290/1',
-        				weiboIconSmall: 'http://tp4.sinaimg.cn/3118093851/180/40015293290/1'
-      				},
-      				date: new Date()
-    			}],
+					content: "欢迎加入Let's Party~",
+					user: {
+						weiboId: '3118093851',
+						weiboName: "Let's Party",
+						weiboIcon: 'http://tp4.sinaimg.cn/3118093851/180/40015481944/1',
+						weiboIconSmall: 'http://tp4.sinaimg.cn/3118093851/180/40015481944/1'
+					},
+					date: new Date()
+				}],
 			};
 			collection.insert(invitation, {safe:true}, this)
 		},
@@ -130,7 +132,7 @@ exports.findOpen=function(req, res){
 			collection.find({
 				'startDate':{$gte: date}, 
 				$or :[{'inviter.user.weiboId':req.params.weiboId},{'invitees':{$elemMatch:{"user.weiboId":req.params.weiboId}}}]
-			}).sort({_id:-1}).skip(req.params.page*8).limit(8).toArray(this);
+			}).sort({startDate:-1}).skip(req.params.page*8).limit(8).toArray(this);
 		},
 		function generateResponse(err, item){
 			if (err) throw err;
@@ -150,7 +152,7 @@ exports.findClosed=function(req, res){
 			collection.find({
 				'startDate':{$lt: date}, 
 				$or :[{'inviter.user.weiboId':req.params.weiboId},{'invitees':{$elemMatch:{"user.weiboId":req.params.weiboId}}}]
-			}).sort({_id:-1}).skip(req.params.page*8).limit(8).toArray(this);
+			}).sort({startDate:1}).skip(req.params.page*8).limit(8).toArray(this);
 		},
 		function generateResponse(err, item){
 			if (err) throw err;
