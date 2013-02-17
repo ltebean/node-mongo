@@ -132,7 +132,7 @@ exports.findOpen=function(req, res){
 			collection.find({
 				'startDate':{$gte: date}, 
 				$or :[{'inviter.user.weiboId':req.params.weiboId},{'invitees':{$elemMatch:{"user.weiboId":req.params.weiboId}}}]
-			}).sort({startDate:-1}).skip(req.params.page*8).limit(8).toArray(this);
+			}).sort({startDate:1}).skip(req.params.page*8).limit(8).toArray(this);
 		},
 		function generateResponse(err, item){
 			if (err) throw err;
@@ -152,7 +152,7 @@ exports.findClosed=function(req, res){
 			collection.find({
 				'startDate':{$lt: date}, 
 				$or :[{'inviter.user.weiboId':req.params.weiboId},{'invitees':{$elemMatch:{"user.weiboId":req.params.weiboId}}}]
-			}).sort({startDate:1}).skip(req.params.page*8).limit(8).toArray(this);
+			}).sort({startDate:-1}).skip(req.params.page*8).limit(8).toArray(this);
 		},
 		function generateResponse(err, item){
 			if (err) throw err;
