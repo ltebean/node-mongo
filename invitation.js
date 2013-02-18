@@ -18,6 +18,9 @@ exports.welcome=function(req, res){
 		},
 		function insertData(err,collection){
 			if (err) throw err;
+			var date=new Date();
+			date.setHours(date.getHours()+12);
+			date.setMinutes(date.getMinutes()-15);
 			var invitation={
 				inviter:{
 					user:{
@@ -35,7 +38,7 @@ exports.welcome=function(req, res){
 					longtitude:"121.47004",
 					picUrlList:['http://ww3.sinaimg.cn/mw690/b9da561bgw1e1xcd84t9lj.jpg']
 				}],
-				startDate:new Date(),
+				startDate:date,
 				invitees:[{
 					user:req.body,
 					status:'accept'
@@ -48,7 +51,7 @@ exports.welcome=function(req, res){
 						weiboIcon: 'http://tp4.sinaimg.cn/3118093851/180/40015481944/1',
 						weiboIconSmall: 'http://tp4.sinaimg.cn/3118093851/180/40015481944/1'
 					},
-					date: new Date()
+					date:date
 				}],
 			};
 			collection.insert(invitation, {safe:true}, this)
