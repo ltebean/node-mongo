@@ -33,7 +33,7 @@ exports.welcome=function(req, res){
 					address:"Let's Party官方微博",
 					latitude:"31.23136",
 					longtitude:"121.47004",
-					picUrlList:['http://www.brightschool.com/images/photos/Wagner/stock-illustration-11386084-children-birthday-party-cartoon.jpg']
+					picUrlList:['http://ww3.sinaimg.cn/mw690/b9da561bgw1e1xcd84t9lj.jpg']
 				}],
 				startDate:new Date(),
 				invitees:[{
