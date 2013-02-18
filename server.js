@@ -1,10 +1,11 @@
 var express = require('express') ;
 var http = require('http'); 
 var util = require("util");
-var invitation=require('./invitation.js');
-var msg=require('./msg.js');
-var crawler  = require('./crawler.js');
-var notification=require('./notification.js');
+var invitation = require('./invitation.js');
+var pic = require('./pic.js');
+var msg = require('./msg.js');
+var crawler = require('./crawler.js');
+var notification = require('./notification.js');
 
 var app=express();
 app.configure(function () {
@@ -27,11 +28,15 @@ app.get('/resource/invitation/open/weiboId/:weiboId/page/:page', invitation.find
 app.get('/resource/invitation/closed/weiboId/:weiboId/page/:page', invitation.findClosed); 
 app.post('/resource/invitation/:id/status', invitation.replyStatus); 
 app.post('/resource/invitation/:id/reply', invitation.replyComment); 
+app.post('/resource/invitation/:id/picWall', invitation.addPic); 
+
 
 app.get('/resource/cities', crawler.findCities);
 app.get('/resource/shop', crawler.searchShop);
 
 app.post('/resource/apns/registration', notification.register);
+
+app.post('/resource/pic',pic.uploadPic);
 
 // var io= require('socket.io').listen(server);
 // io.sockets.on('connection', function (socket) {

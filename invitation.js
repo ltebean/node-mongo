@@ -1,5 +1,5 @@
-
 var Step = require('step');
+var fs =  require('fs');
 var mongo = require('mongodb');
 var check = require('validator').check;
 var msg=require('./msg.js');
@@ -61,6 +61,7 @@ exports.welcome=function(req, res){
 			res.send(invitation);		
 		});	
 } 
+
 exports.create=function(req, res){ 
 	//validateInvitation(req.body);
 	Step(
@@ -94,10 +95,7 @@ exports.create=function(req, res){
 		},
 		function sendNotification(err,invitation){
 			if (err) throw err;
-			var weiboIds=[];
-			for (var i = 0; i < invitation.invitees.length; i++) {
-				weiboIds.push(invitation.invitees[i].user.weiboId);
-			}
+			var weiboIds=getNotificationList(invitation,invitation.inviter.user.weiboId);	
 			var msg=invitation.inviter.user.weiboName+'发起了一个活动('+invitation.shopList[0].shopName+')';
 			notification.send(weiboIds,msg,{});	
 			return invitation;
@@ -176,31 +174,15 @@ exports.replyStatus= function(req, res){
 				{safe:true,new:true},
 				this);
 		},
-		function sendMessage(err,invitation){
-			if (err) throw err;
-			// invitation.invitees.forEach(function(invitee){
-			// 	msg.addMessage(invitee.user.weiboId,{type:'status',body:req.body});	
-			// });
-			// msg.addMessage(invitation.inviter.user.weiboId,{type:'status',body:req.body});
-			return invitation;
-		},
 		function sendNotification(err,invitation){
 			if (err) throw err;
-			var weiboIds=[];
 			var msg='';
 			if(req.body.status==='accept'){
 				msg=req.body.user.weiboName+'参加了活动('+invitation.shopList[0].shopName+')';
 			}else{
 				msg=req.body.user.weiboName+'拒绝了活动('+invitation.shopList[0].shopName+')';
 			}
-			if(invitation.inviter.user.weiboId!=req.body.user.weiboId){
-				weiboIds.push(invitation.inviter.user.weiboId);
-			}
-			for (var i = 0; i < invitation.invitees.length; i++) {
-				if(invitation.invitees[i].user.weiboId!=req.body.user.weiboId){
-					weiboIds.push(invitation.invitees[i].user.weiboId);
-				}
-			}
+			var weiboIds=getNotificationList(invitation,req.body.user.weiboId);	
 			notification.send(weiboIds,msg,{});	
 			return invitation;
 		},
@@ -222,27 +204,10 @@ exports.replyComment=function(req, res){
 				{$push:{'replyList':req.body}, $set:{'lastUpdateDate':new Date()}}, 
 				{safe:true,new:true}, 
 				this);
-		},
-		function sendMessage(err,invitation){
-			if (err) throw err;
-			// invitation.invitees.forEach(function(invitee){
-			// 	msg.addMessage(invitee.user.weiboId,{type:'reply',body:req.body});	
-			// });
-			// msg.addMessage(invitation.inviter.user.weiboId,{type:'reply',body:req.body});
-			return invitation;
-		},
-		function sendNotification(err,invitation){
+		},function sendNotification(err,invitation){
 			if (err) throw err;
 			var msg=req.body.user.weiboName+'发表了回复:'+req.body.content;
-			var weiboIds=[];
-			if(invitation.inviter.user.weiboId!=req.body.user.weiboId){
-				weiboIds.push(invitation.inviter.user.weiboId);
-			}
-			for (var i = 0; i < invitation.invitees.length; i++) {
-				if(invitation.invitees[i].user.weiboId!=req.body.user.weiboId){
-					weiboIds.push(invitation.invitees[i].user.weiboId);
-				}
-			}		
+			var weiboIds=getNotificationList(invitation,req.body.user.weiboId);	
 			notification.send(weiboIds,msg,{});	
 			return invitation;
 		},
@@ -252,6 +217,44 @@ exports.replyComment=function(req, res){
 		});	
 }
 
+exports.addPic=function(req, res){
+	Step(
+		function getCollection(){
+			db.collection('invitation', this); 
+		},
+		function updateData(err,collection){
+			if (err) throw err;
+			collection.findAndModify(
+				{'_id':new BSON.ObjectID(req.params.id)},[],
+				{$push:{'picWall':req.body}, $set:{'lastUpdateDate':new Date()}}, 
+				{safe:true,new:true}, 
+				this);
+		},
+		function sendNotification(err,invitation){
+			if (err) throw err;
+			// var msg=req.body.user.weiboName+'添加了一张图片';
+			// var weiboIds=getNotificationList(invitation,req.body.user.weiboId);	
+			// notification.send(weiboIds,msg,{});	
+			return invitation;
+		},
+		function generateResponse(err, invitation){
+			if (err) throw err;
+			res.send(invitation);
+		});	
+}
+
+function getNotificationList(invitation,senderId){
+	var weiboIds=[];
+	if(invitation.inviter.user.weiboId!=senderId){
+			weiboIds.push(invitation.inviter.user.weiboId);
+	}
+	for (var i = 0; i < invitation.invitees.length; i++) {
+		if(invitation.invitees[i].user.weiboId!=senderId){
+			weiboIds.push(invitation.invitees[i].user.weiboId);
+		}
+	}
+	return weiboIds
+}
 
 function validateInvitation(invitation){
 	check(invitation.inviter).isNull();
