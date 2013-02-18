@@ -128,7 +128,7 @@ exports.findOpen=function(req, res){
 		function findResult(err,collection){
 			if (err) throw err;
 			var date=new Date();
-			date.setHours(date.getHours()-2);
+			date.setHours(date.getHours()-14);
 			collection.find({
 				'startDate':{$gte: date}, 
 				$or :[{'inviter.user.weiboId':req.params.weiboId},{'invitees':{$elemMatch:{"user.weiboId":req.params.weiboId}}}]
@@ -148,7 +148,7 @@ exports.findClosed=function(req, res){
 		function findResult(err,collection){
 			if (err) throw err;
 			var date=new Date();
-			date.setHours(date.getHours()-2);
+			date.setHours(date.getHours()-14);
 			collection.find({
 				'startDate':{$lt: date}, 
 				$or :[{'inviter.user.weiboId':req.params.weiboId},{'invitees':{$elemMatch:{"user.weiboId":req.params.weiboId}}}]
