@@ -2,11 +2,18 @@ var apns = require('apns'), notification, options, connection;
 var db = require('./db.js').sharedDB;
 var Step = require('step');
 
+// options = {
+//    keyFile : "conf/dev/key.pem",
+//    certFile : "conf/dev/cert.pem",
+//    gateway:'gateway.sandbox.push.apple.com',
+//    debug : true,
+// };
+
 options = {
-   keyFile : "conf/dev/key.pem",
-   certFile : "conf/dev/cert.pem",
-   gateway:'gateway.sandbox.push.apple.com',
-   debug : true,
+   keyFile : "conf/product/key.pem",
+   certFile : "conf/product/cert.pem",
+   gateway:'gateway.push.apple.com',
+   debug : false,
 };
 
 var connection = new apns.Connection(options);

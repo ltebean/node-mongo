@@ -36,7 +36,7 @@ exports.welcome=function(req, res){
 					address:"Let's Party官方微博",
 					latitude:"31.23136",
 					longtitude:"121.47004",
-					picUrlList:['http://ww3.sinaimg.cn/mw690/b9da561bgw1e1xcd84t9lj.jpg']
+					picUrlList:['http://ww1.sinaimg.cn/mw690/b9da561bgw1e1yg1rsnxuj.jpg']
 				}],
 				startDate:date,
 				invitees:[{
