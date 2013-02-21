@@ -24,10 +24,12 @@ console.log("server listening on port 3000");
 app.post('/resource/invitation', invitation.create); 
 app.post('/resource/invitation/welcome', invitation.welcome); 
 app.get('/resource/invitation/:id', invitation.find); 
+app.get('/resource/invitation/all/weiboId/:weiboId/page/:page', invitation.findAll); 
 app.get('/resource/invitation/open/weiboId/:weiboId/page/:page', invitation.findOpen); 
 app.get('/resource/invitation/closed/weiboId/:weiboId/page/:page', invitation.findClosed); 
 app.post('/resource/invitation/:id/status', invitation.replyStatus); 
 app.post('/resource/invitation/:id/reply', invitation.replyComment); 
+app.post('/resource/invitation/:id/info', invitation.updateInfo); 
 app.post('/resource/invitation/:id/picWall', invitation.addPic); 
 
 

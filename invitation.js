@@ -121,6 +121,23 @@ exports.find=function(req, res){
 		});
 }
 
+exports.findAll=function(req, res){ 
+	Step(
+		function getCollection(){
+			db.collection('invitation', this); 
+		},
+		function findResult(err,collection){
+			if (err) throw err;
+			collection.find({
+				$or :[{'inviter.user.weiboId':req.params.weiboId},{'invitees':{$elemMatch:{"user.weiboId":req.params.weiboId}}}]
+			}).sort({startDate:1}).skip(req.params.page*8).limit(8).toArray(this);
+		},
+		function generateResponse(err, item){
+			if (err) throw err;
+			res.send(item);
+		});
+}
+
 exports.findOpen=function(req, res){ 
 	Step(
 		function getCollection(){
@@ -170,7 +187,7 @@ exports.replyStatus= function(req, res){
 			if (err) throw err;
 			collection.findAndModify(
 				{'_id':new BSON.ObjectID(req.params.id),'invitees.user.weiboId':req.body.user.weiboId},[],
-				{$set:{'invitees.$.status':req.body.status,'lastUpdateDate':new Date()}},
+				{$set:{'invitees.$.status':req.body.status}},
 				{safe:true,new:true},
 				this);
 		},
@@ -201,13 +218,42 @@ exports.replyComment=function(req, res){
 			if (err) throw err;
 			collection.findAndModify(
 				{'_id':new BSON.ObjectID(req.params.id)},[],
-				{$push:{'replyList':req.body}, $set:{'lastUpdateDate':new Date()}}, 
+				{$push:{'replyList':req.body}}, 
 				{safe:true,new:true}, 
 				this);
 		},function sendNotification(err,invitation){
 			if (err) throw err;
 			var msg=req.body.user.weiboName+'发表了回复:'+req.body.content;
 			var weiboIds=getNotificationList(invitation,req.body.user.weiboId);	
+			notification.send(weiboIds,msg,{});	
+			return invitation;
+		},
+		function generateResponse(err, invitation){
+			if (err) throw err;
+			res.send(invitation);
+		});	
+}
+
+exports.updateInfo=function(req, res){
+	Step(
+		function getCollection(){
+			db.collection('invitation', this); 
+		},
+		function updateData(err,collection){
+			if (err) throw err;
+			collection.findAndModify(
+				{'_id':new BSON.ObjectID(req.params.id)},[],
+				{ 
+					$set:{'shopList':req.body.shopList},
+					$set:{'invitees':req.body.invitees},
+					$set:{'startDate':new Date(req.body.startDate)}
+				}, 
+				{safe:true,new:true}, 
+				this);
+		},function sendNotification(err,invitation){
+			if (err) throw err;
+			var msg=req.body.inviter.user.weiboName+'更新了邀请('+req.body.shopList[0].shopName+')';
+			var weiboIds=getNotificationList(invitation,req.body.invitation.user.weiboId);	
 			notification.send(weiboIds,msg,{});	
 			return invitation;
 		},
@@ -226,7 +272,7 @@ exports.addPic=function(req, res){
 			if (err) throw err;
 			collection.findAndModify(
 				{'_id':new BSON.ObjectID(req.params.id)},[],
-				{$push:{'picWall':req.body}, $set:{'lastUpdateDate':new Date()}}, 
+				{$push:{'picWall':req.body}}, 
 				{safe:true,new:true}, 
 				this);
 		},
