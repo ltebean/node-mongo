@@ -244,9 +244,11 @@ exports.updateInfo=function(req, res){
 			collection.findAndModify(
 				{'_id':new BSON.ObjectID(req.params.id)},[],
 				{ 
-					$set:{'shopList':req.body.shopList},
-					$set:{'invitees':req.body.invitees},
-					$set:{'startDate':new Date(req.body.startDate)}
+					$set:{
+						'shopList':req.body.shopList,
+						'invitees':req.body.invitees,
+						'startDate':new Date(req.body.startDate)
+					}
 				}, 
 				{safe:true,new:true}, 
 				this);
