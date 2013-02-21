@@ -245,7 +245,6 @@ exports.updateInfo=function(req, res){
 				{'_id':new BSON.ObjectID(req.params.id)},[],
 				{ 
 					$set:{
-						'shopList':req.body.shopList,
 						'invitees':req.body.invitees,
 						'startDate':new Date(req.body.startDate)
 					}
