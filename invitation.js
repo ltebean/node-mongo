@@ -254,7 +254,7 @@ exports.updateInfo=function(req, res){
 		},function sendNotification(err,invitation){
 			if (err) throw err;
 			var msg=req.body.inviter.user.weiboName+'更新了邀请('+req.body.shopList[0].shopName+')';
-			var weiboIds=getNotificationList(invitation,req.body.invitation.user.weiboId);	
+			var weiboIds=getNotificationList(invitation,req.body.inviter.user.weiboId);	
 			notification.send(weiboIds,msg,{});	
 			return invitation;
 		},
